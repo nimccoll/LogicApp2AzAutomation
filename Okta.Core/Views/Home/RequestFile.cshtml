@@ -1,0 +1,61 @@
+﻿<!--
+//===============================================================================
+// Microsoft FastTrack for Azure
+// Logic App to Azure Automation Sample
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+-->
+@{
+    ViewData["Title"] = "Request File";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome @ViewBag.User (@ViewBag.IPAddress)</h1>
+    <h2>View / Download a File via SalesForce Custom Objects</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <form asp-action="RequestFile">
+                <table class="table table-striped">
+                    <tr>
+                        <th>File Name</th>
+                        <th></th>
+                        <th>URL</th>
+                    </tr>
+                    @foreach (FileRequest file in ViewBag.Files)
+                    {
+                    <tr>
+                        <td>@file.FileName__c</td>
+                        <td><input type="submit" id="@file.FileName__c" name="@file.FileName__c" value="View / Download" class="btn btn-sm" /></td>
+                        @if (!string.IsNullOrEmpty(file.FileUrl__c))
+                        {
+                            if (file.FileName__c.EndsWith(".mp4"))
+                            {
+                                <td>
+                                    <video width="320" height="240" controls>
+                                        <source src="@file.FileUrl__c" type="video/mp4" />
+                                    </video>
+
+                                </td>
+                            }
+                            else
+                            {
+                                <td><a href="@file.FileUrl__c">@file.FileName__c</a></td>
+                            }
+                        }
+                        else
+                        {
+                            <td>@file.Status__c</td>
+                        }
+                    </tr>
+                    }
+                </table>
+            </form>
+        </div>
+    </div>
+</div>

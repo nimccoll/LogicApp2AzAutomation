@@ -1,0 +1,355 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_nimccollpbisrvr_name": {
+            "defaultValue": "nimccollpbisrvr",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2018-12-01",
+            "name": "[concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-nsg')]",
+            "location": "eastus",
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "74332ab4-0557-4383-a3bf-5ac6af201528",
+                "defaultSecurityRules": [
+                    {
+                        "name": "AllowVnetInBound",
+                        "etag": "W/\"d78ea2f2-99e4-4a16-84d4-6954af31fbc7\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow inbound traffic from all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowAzureLoadBalancerInBound",
+                        "etag": "W/\"d78ea2f2-99e4-4a16-84d4-6954af31fbc7\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow inbound traffic from azure load balancer",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "AzureLoadBalancer",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "DenyAllInBound",
+                        "etag": "W/\"d78ea2f2-99e4-4a16-84d4-6954af31fbc7\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Deny all inbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowVnetOutBound",
+                        "etag": "W/\"d78ea2f2-99e4-4a16-84d4-6954af31fbc7\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow outbound traffic from all VMs to all VMs in VNET",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "VirtualNetwork",
+                            "destinationAddressPrefix": "VirtualNetwork",
+                            "access": "Allow",
+                            "priority": 65000,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "AllowInternetOutBound",
+                        "etag": "W/\"d78ea2f2-99e4-4a16-84d4-6954af31fbc7\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Allow outbound traffic from all VMs to Internet",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "Internet",
+                            "access": "Allow",
+                            "priority": 65001,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "DenyAllOutBound",
+                        "etag": "W/\"d78ea2f2-99e4-4a16-84d4-6954af31fbc7\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "description": "Deny all outbound traffic",
+                            "protocol": "*",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "*",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Deny",
+                            "priority": 65500,
+                            "direction": "Outbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2018-12-01",
+            "name": "[concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-ip')]",
+            "location": "eastus",
+            "sku": {
+                "name": "Basic",
+                "tier": "Regional"
+            },
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "c9692184-a560-4352-a86e-a1e38e3701e0",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('virtualMachines_nimccollpbisrvr_name')]",
+                    "fqdn": "[concat(parameters('virtualMachines_nimccollpbisrvr_name'), '.eastus.cloudapp.azure.com')]"
+                },
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2018-12-01",
+            "name": "[concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-vnet')]",
+            "location": "eastus",
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "941e9135-4b24-4be5-9552-95dcd084e566",
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.1.2.0/24"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "etag": "W/\"f233fae6-3b42-4e5b-9420-252e721035cf\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "addressPrefix": "10.1.2.0/24",
+                            "delegations": []
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false,
+                "enableVmProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2018-10-01",
+            "name": "[parameters('virtualMachines_nimccollpbisrvr_name')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-nic'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_D2_v3"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter-with-Containers",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[parameters('virtualMachines_nimccollpbisrvr_name')]",
+                        "createOption": "FromImage",
+                        "vhd": {
+                            "uri": "[concat('https://nimccollftavmstg.blob.core.windows.net/vhds/', parameters('virtualMachines_nimccollpbisrvr_name'), '20180803143138.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "diskSizeGB": 127
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_nimccollpbisrvr_name')]",
+                    "adminUsername": "",
+                    "adminPassword": "",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
+                    },
+                    "secrets": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-nic'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "https://nimccollftavmstg.blob.core.windows.net/"
+                    }
+                }
+            }
+        },
+        {
+            "type": "microsoft.devtestlab/schedules",
+            "apiVersion": "2016-05-15",
+            "name": "[concat('shutdown-computevm-', parameters('virtualMachines_nimccollpbisrvr_name'))]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_nimccollpbisrvr_name'))]"
+            ],
+            "properties": {
+                "status": "Enabled",
+                "taskType": "ComputeVmShutdownTask",
+                "dailyRecurrence": {
+                    "time": "1800"
+                },
+                "timeZoneId": "Eastern Standard Time",
+                "notificationSettings": {
+                    "status": "Disabled",
+                    "timeInMinutes": 30
+                },
+                "targetResourceId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_nimccollpbisrvr_name'))]",
+                "provisioningState": "Succeeded",
+                "uniqueIdentifier": "06a51037-8489-4aa9-a68b-7c8cce3c55bc"
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2018-12-01",
+            "name": "[concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-vnet/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-vnet'))]"
+            ],
+            "properties": {
+                "provisioningState": "Succeeded",
+                "addressPrefix": "10.1.2.0/24",
+                "delegations": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2018-12-01",
+            "name": "[concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-nic')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-ip'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-vnet'), 'default')]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-nsg'))]"
+            ],
+            "properties": {
+                "provisioningState": "Succeeded",
+                "resourceGuid": "54898387-b13a-4e4c-8951-24a8401a0a01",
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "etag": "W/\"c27186f4-c16b-4180-a30d-2a30fce48960\"",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAddress": "10.1.2.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-ip'))]"
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-vnet'), 'default')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": [],
+                    "appliedDnsServers": []
+                },
+                "enableAcceleratedNetworking": false,
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', concat(parameters('virtualMachines_nimccollpbisrvr_name'), '-nsg'))]"
+                },
+                "primary": true,
+                "tapConfigurations": []
+            }
+        },
+        {
+            "apiVersion": "2018-06-01",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('virtualMachines_nimccollpbisrvr_name'),'/', 'InstallMatLab')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/',parameters('virtualMachines_nimccollpbisrvr_name'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "CustomScriptExtension",
+                "typeHandlerVersion": "1.7",
+                "autoUpgradeMinorVersion":true,
+                "settings": {
+                    "fileUris": [
+                        "https://nimccollftastg.blob.core.windows.net/matlab/InstallMatLab.ps1"
+                    ],
+                    "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File InstallMatLab.ps1"
+                }
+            }
+        }
+    ]
+}

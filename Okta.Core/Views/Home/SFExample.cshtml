@@ -1,0 +1,79 @@
+﻿<!--
+//===============================================================================
+// Microsoft FastTrack for Azure
+// Logic App to Azure Automation Sample
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+-->
+@{
+    ViewData["Title"] = "SalesForce Example";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome @ViewBag.User (@ViewBag.IPAddress)</h1>
+    <h2>Trigger VM Deployment via SalesForce Custom Objects</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <form asp-action="SFExample">
+                <div class="form-row">
+                    <label class="control-label">Virtual Machine Name</label>&nbsp;
+                    <input id="txtVirtualMachineName" name="txtVirtualMachineName" class="form-control" style="width:200px" />&nbsp;
+                    <input id="btnRequestVM" name="btnRequestVM" type="submit" value="Request Virtual Machine" class="btn btn-primary" />
+                </div>
+                <input type="hidden" id="hidVirtualMachineName" name="hidVirtualMachineName" value="@ViewBag.VirtualMachineName" />
+                <input type="hidden" id="hidEnvRecordId" name="hidEnvRecordId" value="@ViewBag.EnvRecordId" />
+                <input type="hidden" id="hidAccReqRecordId" name="hidAccReqRecordId" value="@ViewBag.AccReqRecordId" />
+                <hr style="margin-top:20px;" />
+                @if (!string.IsNullOrEmpty(ViewBag.VirtualMachineName))
+                {
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Requested Virtual Machines</th>
+                            <th>
+                                @if (ViewBag.Status != "Processing")
+                                {
+                                    <input type="submit" id="btnCheckStatus" name="btnCheckStatus" value="Check Status" class="btn btn-secondary" disabled />
+                                }
+                                else
+                                {
+                                    <input type="submit" id="btnCheckStatus" name="btnCheckStatus" value="Check Status" class="btn btn-secondary" />
+                                }
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Virtual Machine Name</th>
+                            <th>Status</th>
+                        </tr>
+                        <tr>
+                            <td>@ViewBag.VirtualMachineName</td>
+                            <td>
+                                @if (ViewBag.Status == "Ready")
+                                {
+                                    @ViewBag.Status <input type="submit" id="btnRequestAccess" name="btnRequestAccess" value="Request Access" class="btn btn-secondary" />
+                                }
+                                else if (ViewBag.Status == "Requested")
+                                {
+                                    @ViewBag.Status <input type="submit" id="btnCheckAccess" name="btnCheckAccess" value="Check Access" class="btn btn-secondary" />
+                                }
+                                else if (ViewBag.Status == "Granted")
+                                {
+                                    @Html.ActionLink((string)ViewBag.Status, "RDP", "Home", new { id = (string)ViewBag.VirtualMachineName })
+                                }
+                                else
+                                {
+                                    @ViewBag.Status
+                                }
+                            </td>
+                        </tr>
+                    </table>
+                }
+            </form>
+        </div>
+    </div>
+</div>

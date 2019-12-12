@@ -1,0 +1,68 @@
+﻿<!--
+//===============================================================================
+// Microsoft FastTrack for Azure
+// Logic App to Azure Automation Sample
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+-->
+@{
+    ViewData["Title"] = "VM Deployment via JavaScript";
+}
+<div class="text-center">
+    <h1 class="display-4">Welcome @ViewBag.User (@ViewBag.IPAddress)</h1>
+    <h2>Trigger VM Deployment via JavaScript</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-row">
+                <label class="control-label">Virtual Machine Name</label>&nbsp;
+                <input id="txtVirtualMachineName" name="txtVirtualMachineName" class="form-control" style="width:200px" />&nbsp;
+                <input id="btnRequestVM" name="btnRequestVM" type="button" value="Request Virtual Machine" class="btn btn-primary" />
+            </div>
+            <input type="hidden" id="hidVirtualMachineName" name="hidVirtualMachineName" />
+            <hr style="margin-top:20px;" />
+            <div id="divVirtualMachineTable" style="display:none">
+                <table class="table table-striped">
+                    <tr>
+                        <th>Requested Virtual Machines</th>
+                        <th>
+                            <input type="submit" id="btnCheckStatus" name="btnCheckStatus" value="Check Status" class="btn btn-secondary" disabled />
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Virtual Machine Name</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td><span id="spnVirtualMachineName"></span></td>
+                        <td>
+                            <span id="spnStatus"></span> <input type="submit" id="btnRequestAccess" name="btnRequestAccess" value="Request Access" class="btn btn-secondary" style="display:none" />
+                            <input type="submit" id="btnCheckAccess" name="btnCheckAccess" value="Check Access" class="btn btn-secondary" style="display:none" />
+                            <a href="./rdp/" id="lnkRDP" style="display:none">Access Granted</a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <environment include="Development">
+        <script src="~/js/azure-storage.queue.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/azure-storage.queue.min.js"></script>
+    </environment>
+    <script type="text/javascript">
+        // On document ready initialize the JavaScript functionality for the page
+        $(document).ready(function () {
+            Okta.Core.init('@ViewBag.FunctionUrl', '@ViewBag.FunctionKey', '@ViewBag.QueueUrl', '@ViewBag.User', '@ViewBag.IPAddress');
+        });
+    </script>
+}
